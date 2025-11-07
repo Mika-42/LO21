@@ -2,15 +2,16 @@
 #===Makefile==================================================================#
 PROJECT_NAME=lo21
 #=============================================================================#
-CC=gcc
-SOURCES=main.c
-FLAGS= -Wall -Wextra -Werror -Wpedantic
+CC = gcc
+SOURCES = sources/*.c
+FLAGS = -Wall -Wextra -Werror -Wpedantic
+INCLUDE_DIRECTORY = -Isources
 #=============================================================================#
 BUILD_DIRECTORY=build
 #=============================================================================#
 
-build:
-	$(CC) $(SOURCES) -o $(BUILD_DIRECTORY)/$(PROJECT_NAME) $(FLAGS)
+build: create-build-directory
+	$(CC) $(INCLUDE_DIRECTORY) $(SOURCES) -o $(BUILD_DIRECTORY)/$(PROJECT_NAME) $(FLAGS)
 run:
 	./$(BUILD_DIRECTORY)/$(PROJECT_NAME)
 
