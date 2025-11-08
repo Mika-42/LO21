@@ -15,7 +15,7 @@ make build-release
 
 + Déboguer le programme
 ```bash
-make debug-run
+make run-debug
 ```
 
 + Exécuter le programme
