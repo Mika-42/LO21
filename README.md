@@ -3,9 +3,19 @@
 ## Compilation avec `make`
 *Ce makefile a été conçu pour être exécuté dans un environnement linux*
 
-+ Compiler le programme
++ Compiler le programme pour le déboguage
 ```bash
-make build
+make build-debug
+```
+
++ Compiler le programme pour la production
+```bash
+make build-release
+```
+
++ Déboguer le programme
+```bash
+make debug-run
 ```
 
 + Exécuter le programme
