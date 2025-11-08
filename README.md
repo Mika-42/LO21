@@ -13,6 +13,11 @@ make build-debug
 make build-release
 ```
 
++ Compiler les tests unitaires
+```bash
+    make build-unit-test
+```
+
 + Déboguer le programme
 ```bash
 make run-debug
@@ -23,12 +28,32 @@ make run-debug
 make run
 ```
 
++ Exécuter un test unitaire
+```bash
+make run-unit-test FILENAME=<nom du fichier>
+```
+
++ Exécuter l'intégralité des test unitaires
+```bash
+make run-all-unit-test
+```
+
++ Déboguer un test unitaire
+```bash
+make run-unit-test-debug FILENAME=<nom du fichier>
+```
+
++ Effacer le répertoire de compilation
+```bash
+make clean
+```
++ Effacer le répertoire des test unitaires
+```bash
+make clean-unit-test
+```
+
 + Compiler puis exécuter le programme
 ```bash
 make build run
 ```
 
-+ Effacer le répertion de compilation
-```bash
-make clean
-```

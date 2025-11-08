@@ -13,9 +13,10 @@ typedef struct Queue {
 } Queue;
 
 // ajoute un élément à la fin de la queue
-Queue* push_back(Queue* queue, Antecedent antecedent);
+Queue* queue_push_back(Queue* queue, Antecedent antecedent);
 
 // supprime le premier élément de queue et renvoie la nouvelle queue
-Queue* pop_front(Queue* queue);
+Queue* queue_pop_front(Queue* queue);
+
 
 #endif //QUEUE_H

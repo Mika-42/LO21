@@ -1,6 +1,6 @@
 #include "queue.h"
 
-Queue* push_back(Queue* queue, Antecedent antecedent)
+Queue* queue_push_back(Queue* queue, Antecedent antecedent)
 {
 	Queue* newElement = malloc(sizeof(*newElement));
 	
@@ -23,7 +23,7 @@ Queue* push_back(Queue* queue, Antecedent antecedent)
 	return queue;
 }
 
-Queue* pop_front(Queue* queue)
+Queue* queue_pop_front(Queue* queue)
 {
 	if(queue == NULL) return NULL;
 
