@@ -1,12 +1,32 @@
 #include "rule.h"
 #include <stdio.h>
 
+// ajoute un élément à la fin de la règle
+Proposition* rule_push_back(Proposition* rule, char* name, Type type);
+
+// todo 
 Proposition* rule_new()
 {
-	return rule_push_back(NULL, NULL);
+	return NULL;
+	//return rule_push_back(NULL, NULL);
 }
 
-Proposition* rule_push_back(Proposition* rule, char* name)
+Proposition* rule_add_premise(Proposition* rule, char* name)
+{
+	return rule_push_back(rule, name, Premise);
+}
+
+Proposition* rule_add_conclusion(Proposition* rule, char* name)
+{
+	if(rule_get_conclusion(rule) == NULL)
+	{
+		rule = rule_push_back(rule, name, Conclusion);
+	}
+	return rule;
+}
+
+//todo insérer à l'avant dernière place si la conclusion est présente
+Proposition* rule_push_back(Proposition* rule, char* name, Type type)
 {
 	// ici, calloc permet d'initialiser tout les membres à 0 ou NULL
 	Proposition* newElement = calloc(1, sizeof(*newElement));
@@ -20,6 +40,8 @@ Proposition* rule_push_back(Proposition* rule, char* name)
 
 		strcpy(newElement->name, name);
 	}
+	
+	newElement->type = type;
 
 	if(rule == NULL)
 	{
@@ -37,7 +59,7 @@ Proposition* rule_push_back(Proposition* rule, char* name)
 
 Proposition* rule_pop_front(Proposition* rule)
 {
-	if(rule == NULL) return NULL;
+	if(rule == NULL || rule->type == Conclusion) return NULL;
 
 	Proposition* firstElement = rule;
 	rule = rule->next;
@@ -52,7 +74,11 @@ Proposition* rule_delete(Proposition* rule)
 {
 	while(rule != NULL)
 	{
-		rule = rule_pop_front(rule);
+		Proposition* firstElement = rule;
+        	rule = rule->next;
+
+        	free(firstElement->name);
+        	free(firstElement);
 	}
 
 	return rule;
@@ -60,7 +86,7 @@ Proposition* rule_delete(Proposition* rule)
 
 bool rule_contain(const Proposition* rule, const char* name)
 {
-	if(rule == NULL || name == NULL) return false;
+	if(rule == NULL || name == NULL || rule->type == Conclusion) return false;
 
 	if(strcmp(rule->name, name) == 0) return true;
 
@@ -76,7 +102,7 @@ Proposition* rule_erase_if(Proposition* rule, const char* name)
 	while(cur != NULL)
 	{
 		// retirer les propositions vide 
-		if(((cur->name == NULL) && (name == NULL)) || 
+		if((cur->type == Premise && (cur->name == NULL) && (name == NULL)) || 
 				(strcmp(cur->name, name) == 0))
 		{
 			Proposition* del = cur;
@@ -110,5 +136,23 @@ void rule_print(Proposition* rule)
 Proposition* rule_get_conclusion(Proposition* rule)
 {
 	for(;rule->next != NULL; rule = rule->next);
-	return rule;
+	return (rule->type == Conclusion) ? rule : NULL;
+}
+
+bool rule_is_empty_premise(Proposition* rule)
+{
+	if(rule == NULL) return true;
+
+	for(;rule != NULL; rule = rule->next)
+	{
+		if(rule->type == Premise && rule->name != NULL && rule->name[0] != '\0')
+			return false;
+	}
+
+	return true;
+}
+
+Proposition* rule_head(Proposition* rule)
+{
+	return rule->type == Conclusion ? NULL : rule;
 }

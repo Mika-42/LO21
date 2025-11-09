@@ -11,19 +11,24 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef enum Type {Premise, Conclusion} Type;
+
 // structure de donnée FIFO
 typedef struct Proposition {
         char*			name;
+	Type			type;
         struct Proposition*	next;
 } Proposition;
 
 // crée une règle vide
 Proposition* rule_new();
 
-// ajoute un élément à la fin de la règle
-Proposition* rule_push_back(Proposition* rule, char* name);
+Proposition* rule_add_premise(Proposition* rule, char* name);
 
-// supprime le premier élément de la règle
+// todo add unit-test
+Proposition* rule_add_conclusion(Proposition* rule, char* name);
+
+// supprime la première prémisse de la règle
 Proposition* rule_pop_front(Proposition* rule);
 
 // supprime l'intégralité de la règle
@@ -40,4 +45,9 @@ void rule_print(Proposition* rule);
 // accède à la conclusion (dernier élément de la liste)
 Proposition* rule_get_conclusion(Proposition* rule);
 
+// vérifie si la prémisse est vide
+bool rule_is_empty_premise(Proposition* rule);
+
+// accède à la tête de la file
+Proposition* rule_head(Proposition* rule);
 #endif //RULE_H
