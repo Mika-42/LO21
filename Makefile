@@ -4,7 +4,7 @@ CC := gcc
 DEBUGGER := gdb
 
 SOURCES_DIRECTORY := sources
-INCLUDE_DIRECTORY := -I$(SOURCES_DIRECTORY)/queue -I$(SOURCES_DIRECTORY)/rule
+INCLUDE_DIRECTORY := $(addprefix -I, $(shell find $(SOURCES_DIRECTORY) -type d))
 BUILD_DIRECTORY := build
 UNIT_TEST_DIRECTORY := unit-test
 BUILD_UNIT_TEST_DIRECTORY := build-unit-test
