@@ -30,8 +30,11 @@ build-release: create-build-directory
 	@$(MAKE) build-generic COMPILATION_FLAGS="$(RELEASE_FLAG)" SRCS_FILES="$(SOURCES_FILES)" OUTPUT_FILENAME="$(BUILD_DIRECTORY)/$(PROJECT_NAME)"
 
 build-unit-test: create-build-unit-test-directory
-	$(foreach FILE, $(shell find $(UNIT_TEST_DIRECTORY) -type f -name "*.c"), @$(MAKE) build-unit-test-generic FILES="$(FILE) $(C_FILES)" OUTPUT_FILE="$(notdir $(FILE:.c=))";)
-
+	@find $(UNIT_TEST_DIRECTORY) -type f -name "*.c" -print | while read f; do \
+		name=$$(basename $$f .c); \
+		$(MAKE) build-unit-test-generic FILES="$$f $(C_FILES)" OUTPUT_FILE="$$name"; \
+	done
+	
 run-debug:
 	$(DEBUGGER) ./$(BUILD_DIRECTORY)/$(PROJECT_NAME)
 
