@@ -1,16 +1,29 @@
 #include <stdio.h>
 #include "rule.h"
 
-void test1()
+Proposition* create_premise(Proposition* rule, char** sequence, const int size)
+{
+	for(int i = 0; i < size; ++i)
+	{
+		rule = rule_add_premise(rule, sequence[i]);
+	}
+	return rule;
+}
+
+bool test1()
 {
 	// On teste la création d'un nouvel élément
 	Proposition* rule = rule_new();	
+	bool condition = rule == NULL;
+
 	printf("[1] test::rule_new()\t\t\t\t : %s\n",
-        	rule != NULL ? "passed" : "failed"
+        	condition ? "passed" : "failed"
         );
+
+	return condition;
 }
 
-void test2()
+bool test2()
 {
         // On teste l'ajout d'un élément en queue
          
@@ -20,148 +33,152 @@ void test2()
 	if(rule == NULL)
 	{
 		printf("[2] failed to allocate rule");
-		return;
+		return false;
 	}
 	
-	printf("[2] test::rule_add_premise(rule, \"moteurDemarre\") : %s\n",
-        	(strcmp(rule->name, "moteurDemarre") == 0 ? "passed" : "failed")
+	bool cond1 = strcmp(rule->name, "moteurDemarre") == 0;
+	printf("[2] test::rule_add_premise(rule, \"moteurDemarre\"): %s\n",
+        	(cond1 ? "passed" : "failed")
         );
 		
-	if(rule->name != NULL) free(rule->name);
-	free(rule);
+	rule_delete(rule);
 	
-	printf("    test::rule_add_premise(NULL, \"moteurDemarre\") : %s\n",
-        	rule_add_premise(NULL, "moteurDemarre") != NULL ? "passed" : "failed"
+	bool cond2 = rule_add_premise(NULL, "moteurDemarre") != NULL;
+	printf("    test::rule_add_premise(NULL, \"moteurDemarre\"): %s\n",
+        	cond2 ? "passed" : "failed"
         );
+
+	return cond1 && cond2;
 }
 
-void test3()
+bool test3()
 { 
         // On teste le retrait d'un élément en tête
          
 	Proposition* rule = NULL;
-	rule = rule_add_premise(rule, "moteurDemarre");
+	char* sequence[2] = {"moteurDemarre", "reservoirVide"};
+	rule = create_premise(rule, sequence, 2);
+
+	Proposition* head = rule_get_premise_head(rule);
 	
-	if(rule == NULL)
-        {       
-                printf("[2] failed to allocate rule");
-                return;
-        }
-
-        rule = rule_add_premise(rule, "reservoirVide");
-	
-	if(rule->next == NULL)
-        {       
-                printf("[2] failed to allocate rule->next");
-                return;
-        }
-
-	rule = rule_pop_front(rule);
-
-        printf("[3] test::rule_pop_front(rule)\t\t\t : %s\n",
-                (strcmp(rule->name, "reservoirVide") == 0 ? "passed" : "failed")
+	bool cond1 = strcmp(head->name, "moteurDemarre") == 0;
+        printf("[3] test::rule_get_premise_head(rule)\t\t : %s\n",
+                (cond1 ? "passed" : "failed")
         );
 
-	if(rule->name != NULL) free(rule->name);
-	free(rule);
+	bool cond2 = rule_get_premise_head(NULL) == NULL;
+
+        printf("    test::rule_get_premise_head(NULL)\t\t : %s\n",
+                (cond2 ? "passed" : "failed")
+        );
+
+	rule_delete(rule);
+
+	return cond1 && cond2;
 }
 
-void test4()
+bool test4()
 {
 	Proposition* rule = NULL;
-	rule = rule_add_premise(rule, "test1");
-	rule = rule_add_premise(rule, "test2");
-	rule = rule_add_premise(rule, "test3");
-	rule = rule_add_premise(rule, "test4");
-	rule = rule_delete(rule);
+	
+	char* sequence[4] = {"1", "2", "3", "4"};
+	rule = create_premise(rule, sequence, 4);
+
+	bool cond1 = rule_delete(rule) == NULL;
+
 	printf("[4] test::rule_delete(rule)\t\t\t : %s\n",
-                rule == NULL ? "passed" : "failed"
+                cond1 ? "passed" : "failed"
         );
 
-
+	bool cond2 = rule_delete(NULL) == NULL;
 	printf("    test::rule_delete(NULL)\t\t\t : %s\n",
-                rule_delete(NULL) == NULL ? "passed" : "failed"
+                cond2 ? "passed" : "failed"
         );
+	return cond1 && cond2;
 }
 
-void test5()
+bool test5()
 {
+	bool cond1 = rule_contain(NULL, NULL) == false;
 	printf("[5] test::rule_contain(NULL, NULL)\t\t : %s\n",
-                rule_contain(NULL, NULL) == false ? "passed" : "failed"
+                cond1 ? "passed" : "failed"
         );
-
-
+	
+	bool cond2 = rule_contain(NULL, "test") == false;
 	printf("    test::rule_contain(NULL, \"test\")\t\t : %s\n",
-                rule_contain(NULL, "test") == false ? "passed" : "failed"
+                cond2 ? "passed" : "failed"
         );
 
 	Proposition* rule = NULL;
-	rule = rule_add_premise(rule, "test1");
-	rule = rule_add_premise(rule, "test2");
-	rule = rule_add_premise(rule, "test3");
-	rule = rule_add_premise(rule, "test4");
-
-	printf("    test::rule_contain(rule, \"test3\")\t\t : %s\n",
-                rule_contain(rule, "test3") == true ? "passed" : "failed"
+	
+	char* sequence[4] = {"1", "2", "3", "4"};
+	rule = create_premise(rule, sequence, 4);
+	
+	bool cond3 = rule_contain(rule, "3") == true;
+	printf("    test::rule_contain(rule, \"3\")\t\t : %s\n",
+                cond3 ? "passed" : "failed"
         );
 
-	
+	bool cond4 = rule_contain(rule, NULL) == false; 
 	printf("    test::rule_contain(rule, NULL)\t\t : %s\n",
-                rule_contain(rule, NULL) == false ? "passed" : "failed"
+                cond4 ? "passed" : "failed"
         );
 
 	rule = rule_delete(rule);
+
+	return cond1 && cond2 && cond3 && cond4;
 }
 
-void test6()
+bool test6()
 {
 	Proposition* rule = NULL;
-        rule = rule_add_premise(rule, "1");
-        rule = rule_add_premise(rule, "1");
-        rule = rule_add_premise(rule, "2");
-        rule = rule_add_premise(rule, "3");
-        rule = rule_add_premise(rule, "1");
-        rule = rule_add_premise(rule, "4");
-        rule = rule_add_premise(rule, "1");
+	
+	char* sequence1[5] = {"1", "2", "1", "4", "1"};
+	rule = create_premise(rule, sequence1, 5);
 	
 	printf("[6] before: ");
 	rule_print(rule);
 	rule = rule_erase_if(rule, "1");
-	printf("    test::rule_erase_if(rule, \"1\");\n");
+	bool cond1 = rule_contain(rule, "1") == false;
 	printf("    after: ");
         rule_print(rule);
+	printf("    test::rule_erase_if(rule, \"1\")\t\t : %s\n", cond1 ? "passed" : "failed");
 	rule = rule_delete(rule);
-
-	rule = rule_add_premise(rule, "1");
-        rule = rule_add_premise(rule, "1");
-        rule = rule_add_premise(rule, "1");
-        rule = rule_add_premise(rule, "1");
-        rule = rule_add_premise(rule, "1");
-        rule = rule_add_premise(rule, "1");
+	
+	char* sequence2[5] = {"1", "1", "1", "1", "1"};
+	rule = create_premise(rule, sequence2, 5);
 	
 	printf("\n    before: ");
         rule_print(rule);
         rule = rule_erase_if(rule, "1");
-        printf("    test::rule_erase_if(rule, \"1\");\n");
+	bool cond2 = rule == NULL;
         printf("    after: ");
         rule_print(rule);
+        printf("    test::rule_erase_if(rule, \"1\")\t\t : %s\n", cond2 ? "passed" : "failed");
         rule = rule_delete(rule);
+
+	return cond1;
 }
 
-void test7()
+bool test7()
 {
 	Proposition *rule = NULL, *conclusion = NULL;
-        rule = rule_add_premise(rule, "1");
-        rule = rule_add_premise(rule, "2");
-        rule = rule_add_premise(rule, "3");
-        rule = rule_add_premise(rule, "4");
-        rule = rule_add_premise(rule, "1");
-        rule = rule_add_premise(rule, "42");
 
+	char* sequence[4] = {"1", "3", "1", "42"};
+	rule = create_premise(rule, sequence, 4);
+	
 	conclusion = rule_get_conclusion(rule);
-
+	bool cond1 = conclusion == NULL;
 	printf("[7] test::rule_get_conclusion(rule)\t\t : %s\n",
-                conclusion == NULL /*strcmp(conclusion->name, "42") == 0*/ ? "passed" : "failed"
+                cond1 ? "passed" : "failed"
+        );
+
+	rule = rule_add_conclusion(rule, "A");
+	conclusion = rule_get_conclusion(rule);
+	
+	bool cond2 = strcmp(conclusion->name, "A") == 0;
+	printf("[7] test::rule_get_conclusion(rule)\t\t : %s\n",
+                cond2 ? "passed" : "failed"
         );
 
 	printf("    list : ");
@@ -169,52 +186,74 @@ void test7()
 	printf("    conclusion : ");
 	rule_print(conclusion);
 	rule = rule_delete(rule);
+
+	return cond1 && cond2;
 }
 
-void test8()
+bool test8()
 {
 	Proposition *rule = NULL;
-        rule = rule_add_premise(rule, "");
-        rule = rule_add_premise(rule, "2");
-        rule = rule_add_premise(rule, "");
-        rule = rule_add_premise(rule, "4");
-        rule = rule_add_premise(rule, "1");
-        rule = rule_add_premise(rule, "42");
 
+	char* sequence1[6] = {"", "2", "", "4", "1", "42"};
+	rule = create_premise(rule, sequence1, 6);
+	
+	bool cond1 = rule_is_empty_premise(rule) == false;	
 	printf("[8] test::rule_is_empty_premise(rule)\t\t : %s\n",
-                rule_is_empty_premise(rule) == false ? "passed" : "failed"
+                cond1 ? "passed" : "failed"
         );
 	rule = rule_delete(rule);
 
-	rule = rule_add_premise(rule, "");
-        rule = rule_add_premise(rule, "");
-        rule = rule_add_premise(rule, "");
-        rule = rule_add_premise(rule, "");
-        rule = rule_add_premise(rule, "");
-        rule = rule_add_premise(rule, "");
-
-        printf("    test::rule_is_empty_premise(rule)\t\t : %s\n",
-                rule_is_empty_premise(rule) == true ? "passed" : "failed"
+	char* sequence2[6] = {"", "", "", "", "", ""};
+	rule = create_premise(rule, sequence2, 6);
+        
+	bool cond2 = rule_is_empty_premise(rule) == true;
+	printf("    test::rule_is_empty_premise(rule)\t\t : %s\n",
+                cond2 ? "passed" : "failed"
         );
         rule = rule_delete(rule);
 
-
+	bool cond3 = rule_is_empty_premise(NULL) == true;
         printf("    test::rule_is_empty_premise(NULL)\t\t : %s\n",
-                rule_is_empty_premise(NULL) == true ? "passed" : "failed"
+                cond3 ? "passed" : "failed"
         );
+
+	return cond1 && cond2 && cond3;
+}
+
+bool test9()
+{	
+	char* sequence[6] = {"1", "2", "3", "4", "1", "42"};
+	Proposition* rule = NULL;
+	rule = create_premise(rule, sequence, 6);
+	rule = rule_add_conclusion(rule, "A");
+
+       bool cond = strcmp(rule_get_conclusion(rule)->name, "A") == 0;
+
+ 	printf("[9] test::rule_add_conclusion(rule, \"A\")\t : %s\n", 
+		cond ? "passed" : "failed");
+
+	rule_print(rule);
+	return cond;
 }
 
 int main()
 {
 	printf("\n[=====================Unit test start====================]\n\n");
-	test1(); printf("\n");
-	test2(); printf("\n");
-	test3(); printf("\n");
-	test4(); printf("\n");
-	test5(); printf("\n");
-	test6(); printf("\n");
-	test7(); printf("\n");
-	test8(); printf("\n");
+	const int testTotalCount = 9;
+	int testPassed = 0;
+
+	bool (*tests[])(void) = {
+		test1, test2, test3, 
+		test4, test5, test6,
+		test7, test8, test9
+	};
+	
+	for(int i = 0; i < testTotalCount; ++i)
+	{
+		testPassed += tests[i](); printf("\n");
+	}
+
+	printf("%d%% of success.", 100 * testPassed / testTotalCount);
 	printf("\n[======================Unit test end=====================]\n\n");
 	return 0;
 }

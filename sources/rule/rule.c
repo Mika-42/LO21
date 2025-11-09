@@ -4,11 +4,12 @@
 // ajoute un élément à la fin de la règle
 Proposition* rule_push_back(Proposition* rule, char* name, Type type);
 
-// todo 
+// supprime la première prémisse de la règle
+Proposition* rule_pop_front(Proposition* rule);
+
 Proposition* rule_new()
 {
 	return NULL;
-	//return rule_push_back(NULL, NULL);
 }
 
 Proposition* rule_add_premise(Proposition* rule, char* name)
@@ -25,7 +26,6 @@ Proposition* rule_add_conclusion(Proposition* rule, char* name)
 	return rule;
 }
 
-//todo insérer à l'avant dernière place si la conclusion est présente
 Proposition* rule_push_back(Proposition* rule, char* name, Type type)
 {
 	// ici, calloc permet d'initialiser tout les membres à 0 ou NULL
@@ -48,12 +48,21 @@ Proposition* rule_push_back(Proposition* rule, char* name, Type type)
 		return newElement;
 	}
 
-	Proposition* lastElement = rule;
+	Proposition* lastElement = NULL;
 	
-	for(; lastElement->next != NULL; lastElement = lastElement->next);
+	// On récupère la dernière prémisse
+	for(	lastElement = rule; 
+		lastElement->next != NULL && lastElement->next->type != Conclusion; 
+		lastElement = lastElement->next);
 	
-	lastElement->next = newElement;
-	
+	if(lastElement->type == Premise)
+	{
+		lastElement->next = newElement;
+	}
+	else {
+		newElement->next = lastElement->next;
+		lastElement->next = newElement;
+	}
 	return rule;
 }
 
@@ -107,9 +116,7 @@ Proposition* rule_erase_if(Proposition* rule, const char* name)
 		{
 			Proposition* del = cur;
 			
-			cur = prev == NULL ? 
-				(rule = cur->next) : 
-				(prev->next = cur->next);
+			cur = prev == NULL ? (rule = cur->next) : (prev->next = cur->next);
 
 			if(del->name != NULL) free(del->name);
 
@@ -152,7 +159,7 @@ bool rule_is_empty_premise(Proposition* rule)
 	return true;
 }
 
-Proposition* rule_head(Proposition* rule)
+Proposition* rule_get_premise_head(Proposition* rule)
 {
-	return rule->type == Conclusion ? NULL : rule;
+	return rule == NULL || rule->type == Conclusion ? NULL : rule;
 }
