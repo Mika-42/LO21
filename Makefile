@@ -10,8 +10,8 @@ UNIT_TEST_DIRECTORY := unit-test
 BUILD_UNIT_TEST_DIRECTORY := build-unit-test
 
 UNIT_TEST_SOURCES_FILES := $(shell find $(UNIT_TEST_DIRECTORY) -type f -name "*.c")
-SOURCES_FILES := $(shell find sources -type f -name "*.c")
-HEADERS_FILES := $(shell find sources -type f -name "*.h")
+SOURCES_FILES := $(shell find $(SOURCES_DIRECTORY) -type f -name "*.c" | tr '\n' ' ')
+HEADERS_FILES := $(shell find $(SOURCES_DIRECTORY) -type f -name "*.h" | tr '\n' ' ')
 
 SOURCES_WITH_HEADER := $(filter $(HEADERS_FILES), $(SOURCES_FILES:.c=.h))
 C_FILES := $(SOURCES_WITH_HEADER:.h=.c)

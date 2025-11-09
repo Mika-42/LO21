@@ -14,13 +14,15 @@ bool test1()
 {
 	// On teste la création d'un nouvel élément
 	Proposition* rule = rule_new();	
-	bool condition = rule == NULL;
+	bool cond = rule == NULL;
 
 	printf("[1] test::rule_new()\t\t\t\t : %s\n",
-        	condition ? "passed" : "failed"
+        	cond ? "passed" : "failed"
         );
 
-	return condition;
+	rule = rule_delete(rule);
+
+	return cond;
 }
 
 bool test2()
