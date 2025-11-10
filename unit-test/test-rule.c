@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "rule.h"
 
-Proposition* create_premise(Proposition* rule, char** sequence, const int size)
+Rule create_premise(Rule rule, char** sequence, const int size)
 {
 	for(int i = 0; i < size; ++i)
 	{
@@ -13,7 +13,7 @@ Proposition* create_premise(Proposition* rule, char** sequence, const int size)
 bool test1()
 {
 	// On teste la création d'un nouvel élément
-	Proposition* rule = rule_new();	
+	Rule rule = rule_new();	
 	bool cond = rule == NULL;
 
 	printf("[1] test::rule_new()\t\t\t\t : %s\n",
@@ -29,7 +29,7 @@ bool test2()
 {
         // On teste l'ajout d'un élément en queue
          
-        Proposition* rule = NULL;
+        Rule rule = NULL;
        	rule = rule_add_premise(rule, "moteurDemarre");
         
 	if(rule == NULL)
@@ -57,11 +57,11 @@ bool test3()
 { 
         // On teste le retrait d'un élément en tête
          
-	Proposition* rule = NULL;
+	Rule rule = NULL;
 	char* sequence[2] = {"moteurDemarre", "reservoirVide"};
 	rule = create_premise(rule, sequence, 2);
 
-	Proposition* head = rule_get_premise_head(rule);
+	Rule head = rule_get_premise_head(rule);
 	
 	bool cond1 = strcmp(head->name, "moteurDemarre") == 0;
         printf("[3] test::rule_get_premise_head(rule)\t\t : %s\n",
@@ -81,7 +81,7 @@ bool test3()
 
 bool test4()
 {
-	Proposition* rule = NULL;
+	Rule rule = NULL;
 	
 	char* sequence[4] = {"1", "2", "3", "4"};
 	rule = create_premise(rule, sequence, 4);
@@ -111,7 +111,7 @@ bool test5()
                 cond2 ? "passed" : "failed"
         );
 
-	Proposition* rule = NULL;
+	Rule rule = NULL;
 	
 	char* sequence[4] = {"1", "2", "3", "4"};
 	rule = create_premise(rule, sequence, 4);
@@ -164,7 +164,7 @@ bool test6()
 
 bool test7()
 {
-	Proposition *rule = NULL, *conclusion = NULL;
+	Rule rule = NULL, conclusion = NULL;
 
 	char* sequence[4] = {"1", "3", "1", "42"};
 	rule = create_premise(rule, sequence, 4);
@@ -194,7 +194,7 @@ bool test7()
 
 bool test8()
 {
-	Proposition *rule = NULL;
+	Rule rule = NULL;
 
 	char* sequence1[6] = {"", "2", "", "4", "1", "42"};
 	rule = create_premise(rule, sequence1, 6);
@@ -225,7 +225,7 @@ bool test8()
 bool test9()
 {	
 	char* sequence[6] = {"1", "2", "3", "4", "1", "42"};
-	Proposition* rule = NULL;
+	Rule rule = NULL;
 	rule = create_premise(rule, sequence, 6);
 	rule = rule_add_conclusion(rule, "A");
 

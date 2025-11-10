@@ -2,22 +2,22 @@
 #include <stdio.h>
 
 // ajoute un élément à la fin de la règle
-Proposition* rule_push_back(Proposition* rule, char* name, Type type);
+Rule rule_push_back(Rule rule, char* name, Type type);
 
 // supprime la première prémisse de la règle
-Proposition* rule_pop_front(Proposition* rule);
+Rule rule_pop_front(Rule rule);
 
-Proposition* rule_new()
+Rule rule_new()
 {
 	return NULL;
 }
 
-Proposition* rule_add_premise(Proposition* rule, char* name)
+Rule rule_add_premise(Rule rule, char* name)
 {
 	return rule_push_back(rule, name, Premise);
 }
 
-Proposition* rule_add_conclusion(Proposition* rule, char* name)
+Rule rule_add_conclusion(Rule rule, char* name)
 {
 	if(rule_get_conclusion(rule) == NULL)
 	{
@@ -26,10 +26,10 @@ Proposition* rule_add_conclusion(Proposition* rule, char* name)
 	return rule;
 }
 
-Proposition* rule_push_back(Proposition* rule, char* name, Type type)
+Rule rule_push_back(Rule rule, char* name, Type type)
 {
 	// ici, calloc permet d'initialiser tout les membres à 0 ou NULL
-	Proposition* newElement = calloc(1, sizeof(*newElement));
+	Rule newElement = calloc(1, sizeof(*newElement));
 	
 	if(newElement == NULL) return NULL;
 	
@@ -48,7 +48,7 @@ Proposition* rule_push_back(Proposition* rule, char* name, Type type)
 		return newElement;
 	}
 
-	Proposition* lastElement = NULL;
+	Rule lastElement = NULL;
 	
 	// On récupère la dernière prémisse
 	for(	lastElement = rule; 
@@ -66,11 +66,11 @@ Proposition* rule_push_back(Proposition* rule, char* name, Type type)
 	return rule;
 }
 
-Proposition* rule_pop_front(Proposition* rule)
+Rule rule_pop_front(Rule rule)
 {
 	if(rule == NULL || rule->type == Conclusion) return NULL;
 
-	Proposition* firstElement = rule;
+	Rule firstElement = rule;
 	rule = rule->next;
 	
 	free(firstElement->name);
@@ -79,11 +79,11 @@ Proposition* rule_pop_front(Proposition* rule)
 	return rule;
 }
 
-Proposition* rule_delete(Proposition* rule)
+Rule rule_delete(Rule rule)
 {
 	while(rule != NULL)
 	{
-		Proposition* firstElement = rule;
+		Rule firstElement = rule;
         	rule = rule->next;
 
         	free(firstElement->name);
@@ -93,7 +93,7 @@ Proposition* rule_delete(Proposition* rule)
 	return rule;
 }
 
-bool rule_contain(const Proposition* rule, const char* name)
+bool rule_contain(const Rule rule, const char* name)
 {
 	if(rule == NULL || name == NULL || rule->type == Conclusion) return false;
 
@@ -102,11 +102,11 @@ bool rule_contain(const Proposition* rule, const char* name)
 	return rule_contain(rule->next, name);
 }
 
-Proposition* rule_erase_if(Proposition* rule, const char* name)
+Rule rule_erase_if(Rule rule, const char* name)
 {
 	if(rule == NULL) return NULL;
 
-	Proposition *prev = NULL, *cur = rule;
+	Rule prev = NULL, cur = rule;
 	
 	while(cur != NULL)
 	{
@@ -114,7 +114,7 @@ Proposition* rule_erase_if(Proposition* rule, const char* name)
 		if((cur->type == Premise && (cur->name == NULL) && (name == NULL)) || 
 				(strcmp(cur->name, name) == 0))
 		{
-			Proposition* del = cur;
+			Rule del = cur;
 			
 			cur = prev == NULL ? (rule = cur->next) : (prev->next = cur->next);
 
@@ -131,22 +131,22 @@ Proposition* rule_erase_if(Proposition* rule, const char* name)
 	return rule;
 }
 
-void rule_print(Proposition* rule)
+void rule_print(Rule rule)
 {
-	for(Proposition* i = rule; i != NULL; i = i->next)
+	for(Rule i = rule; i != NULL; i = i->next)
 	{
 		printf("(%s)-->", (i->name == NULL ? "" : i->name));
 	}
 	printf("NULL\n");
 }
 
-Proposition* rule_get_conclusion(Proposition* rule)
+Rule rule_get_conclusion(Rule rule)
 {
 	for(;rule->next != NULL; rule = rule->next);
 	return (rule->type == Conclusion) ? rule : NULL;
 }
 
-bool rule_is_empty_premise(Proposition* rule)
+bool rule_is_empty_premise(Rule rule)
 {
 	if(rule == NULL) return true;
 
@@ -159,7 +159,7 @@ bool rule_is_empty_premise(Proposition* rule)
 	return true;
 }
 
-Proposition* rule_get_premise_head(Proposition* rule)
+Rule rule_get_premise_head(Rule rule)
 {
 	return rule == NULL || rule->type == Conclusion ? NULL : rule;
 }

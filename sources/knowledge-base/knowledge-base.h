@@ -3,14 +3,16 @@
 
 #include "rule.h"
 
-typedef struct Rule {
-	Proposition* rule;
-	struct Rule* next;
-} Rule;
+typedef struct Node {
+	Rule rule;
+	struct Node* next;
+} Node;
 
-Rule* kb_new();
-Rule* kb_add_rule(Rule* knowledgeBase,Proposition* rule);
-Rule* kb_get_rule_head(Rule* knowledgeBase);
-Rule* kb_delete(Rule* knowledgeBase);
+typedef Node* KnowledgeBase;
+
+KnowledgeBase kb_new();
+KnowledgeBase kb_add_rule(KnowledgeBase knowledgeBase,Rule rule);
+KnowledgeBase kb_get_rule_head(KnowledgeBase knowledgeBase);
+KnowledgeBase kb_delete(KnowledgeBase knowledgeBase);
 
 #endif //KNOWLEDGE_BASE_H

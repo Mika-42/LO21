@@ -3,7 +3,7 @@
 
 bool test1()
 {
-	Rule* kb = kb_new();
+	KnowledgeBase kb = kb_new();
 	bool cond = kb == NULL;
 
 	printf("[1] test::kb_new()\t\t\t\t : %s\n",
@@ -16,7 +16,7 @@ bool test1()
 
 bool test2()
 {
-	Rule* kb = kb_new();
+	KnowledgeBase kb = kb_new();
 	kb = kb_add_rule(kb, rule_new());
 	kb = kb_add_rule(kb, rule_new());
 	kb = kb_add_rule(kb, rule_new());
@@ -33,8 +33,8 @@ bool test2()
 
 bool test3()
 {	
-	Rule* kb = kb_new();
-	Rule* head = kb_get_rule_head(kb);
+	KnowledgeBase kb = kb_new();
+	KnowledgeBase head = kb_get_rule_head(kb);
 
 	bool cond1 = head == NULL;	
 	printf("[3] test::kb_get_rule_head(NULL)\t\t : %s\n",
@@ -58,7 +58,7 @@ bool test3()
 
 bool test4()
 {
-	Rule* kb = kb_new();
+	KnowledgeBase kb = kb_new();
 	kb = kb_add_rule(kb, rule_new());
 	kb = kb_add_rule(kb, rule_new());
 	kb = kb_add_rule(kb, rule_new());

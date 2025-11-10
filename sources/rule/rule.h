@@ -20,32 +20,34 @@ typedef struct Proposition {
         struct Proposition*	next;
 } Proposition;
 
-// crée une règle vide
-Proposition* rule_new();
+typedef Proposition* Rule;
 
-Proposition* rule_add_premise(Proposition* rule, char* name);
+// crée une règle vide
+Rule rule_new();
+
+Rule rule_add_premise(Rule rule, char* name);
 
 // todo add unit-test
-Proposition* rule_add_conclusion(Proposition* rule, char* name);
+Rule rule_add_conclusion(Rule rule, char* name);
 
 // supprime l'intégralité de la règle
-Proposition* rule_delete(Proposition* rule);
+Rule rule_delete(Rule rule);
 
 // vérifie récursivement si une prémisse est dans la règle
-bool rule_contain(const Proposition* rule, const char* name);
+bool rule_contain(const Rule rule, const char* name);
 
 // supprime toutes les propositions correspondant au nom donné
-Proposition* rule_erase_if(Proposition* rule, const char* name);
+Rule rule_erase_if(Rule rule, const char* name);
 
-void rule_print(Proposition* rule);
+void rule_print(Rule rule);
 
 // accède à la conclusion (dernier élément de la liste)
-Proposition* rule_get_conclusion(Proposition* rule);
+Rule rule_get_conclusion(Rule rule);
 
 // vérifie si la prémisse est vide
-bool rule_is_empty_premise(Proposition* rule);
+bool rule_is_empty_premise(Rule rule);
 
 // accède à la tête de la file
-Proposition* rule_get_premise_head(Proposition* rule);
+Rule rule_get_premise_head(Rule rule);
 
 #endif //RULE_H

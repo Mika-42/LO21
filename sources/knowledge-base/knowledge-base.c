@@ -1,15 +1,15 @@
 #include "knowledge-base.h"
 
-Rule* kb_new()
+KnowledgeBase kb_new()
 {
 	return NULL;
 }
 
-Rule* kb_add_rule(Rule* knowledgeBase,Proposition* rule)
+KnowledgeBase kb_add_rule(KnowledgeBase knowledgeBase,Rule rule)
 {
 	
 	// ici, calloc permet d'initialiser tout les membres à 0 ou NULL
-	Rule* newElement = calloc(1, sizeof(*newElement));
+	KnowledgeBase newElement = calloc(1, sizeof(*newElement));
 	
 	if(newElement == NULL) return NULL;
 	
@@ -20,7 +20,7 @@ Rule* kb_add_rule(Rule* knowledgeBase,Proposition* rule)
 		return newElement;
 	}
 
-	Rule* lastElement = NULL;
+	KnowledgeBase lastElement = NULL;
 	
 	// On récupère la dernière règle de la base de connaissance
 	for(lastElement = knowledgeBase; lastElement->next != NULL; 
@@ -31,16 +31,16 @@ Rule* kb_add_rule(Rule* knowledgeBase,Proposition* rule)
 	return knowledgeBase;
 }
 
-Rule* kb_get_rule_head(Rule* knowledgeBase)
+KnowledgeBase kb_get_rule_head(KnowledgeBase knowledgeBase)
 {
 	return knowledgeBase;
 }
 
-Rule* kb_delete(Rule* knowledgeBase)
+KnowledgeBase kb_delete(KnowledgeBase knowledgeBase)
 {
 	while(knowledgeBase != NULL)
         {
-                Rule* firstElement = knowledgeBase;
+                KnowledgeBase firstElement = knowledgeBase;
                 knowledgeBase = knowledgeBase->next;
 
                 firstElement->rule = rule_delete(firstElement->rule);
