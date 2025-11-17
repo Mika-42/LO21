@@ -10,12 +10,14 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include "proposition.h"
 
 typedef enum Type {Premise, Conclusion} Type;
 
+
 // structure de donnée FIFO
 typedef struct Proposition {
-        char*			name;
+        uint64			name;
 	Type			type;
         struct Proposition*	next;
 } Proposition;
@@ -25,16 +27,16 @@ typedef Proposition* Rule;
 // crée une règle vide
 Rule rule_new();
 
-Rule rule_add_premise(Rule rule, char* name);
+Rule rule_add_premise(Rule rule, const Premise_t name);
 
 // todo add unit-test
-Rule rule_add_conclusion(Rule rule, char* name);
+Rule rule_add_conclusion(Rule rule, const Conclusion_t name);
 
 // supprime l'intégralité de la règle
 Rule rule_delete(Rule rule);
 
 // vérifie récursivement si une prémisse est dans la règle
-bool rule_contain(const Rule rule, const char* name);
+bool rule_contain(const Rule rule, const Premise_t name);
 
 // supprime toutes les propositions correspondant au nom donné
 Rule rule_erase_if(Rule rule, const char* name);

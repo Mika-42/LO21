@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 // ajoute un élément à la fin de la règle
-Rule rule_push_back(Rule rule, char* name, Type type);
+Rule rule_push_back(Rule rule, uint64 name, Type type);
 
 // supprime la première prémisse de la règle
 Rule rule_pop_front(Rule rule);
@@ -12,12 +12,12 @@ Rule rule_new()
 	return NULL;
 }
 
-Rule rule_add_premise(Rule rule, char* name)
+Rule rule_add_premise(Rule rule, const Premise_t name)
 {
 	return rule_push_back(rule, name, Premise);
 }
 
-Rule rule_add_conclusion(Rule rule, char* name)
+Rule rule_add_conclusion(Rule rule, const Conclusion_t name)
 {
 	if(rule_get_conclusion(rule) == NULL)
 	{
@@ -26,21 +26,14 @@ Rule rule_add_conclusion(Rule rule, char* name)
 	return rule;
 }
 
-Rule rule_push_back(Rule rule, char* name, Type type)
+Rule rule_push_back(Rule rule, const uint64 name, Type type)
 {
 	// ici, calloc permet d'initialiser tout les membres à 0 ou NULL
 	Rule newElement = calloc(1, sizeof(*newElement));
 	
 	if(newElement == NULL) return NULL;
 	
-	if(name != NULL) {
-		newElement->name = malloc(strlen(name) + 1);
-	
-		if(newElement->name == NULL) return NULL;
-
-		strcpy(newElement->name, name);
-	}
-	
+	newElement->name = name;
 	newElement->type = type;
 
 	if(rule == NULL)
@@ -73,7 +66,6 @@ Rule rule_pop_front(Rule rule)
 	Rule firstElement = rule;
 	rule = rule->next;
 	
-	free(firstElement->name);
 	free(firstElement);
 
 	return rule;
@@ -85,24 +77,20 @@ Rule rule_delete(Rule rule)
 	{
 		Rule firstElement = rule;
         	rule = rule->next;
-
-        	free(firstElement->name);
         	free(firstElement);
 	}
 
 	return rule;
 }
 
-bool rule_contain(const Rule rule, const char* name)
+bool rule_contain(const Rule rule, const Premise_t name)
 {
-	if(rule == NULL || name == NULL || rule->type == Conclusion) return false;
+	if(rule == NULL || rule->type == Conclusion) return false;
 
-	if(strcmp(rule->name, name) == 0) return true;
-
-	return rule_contain(rule->next, name);
+	return (rule->name == name) ? true : rule_contain(rule->next, name);
 }
 
-Rule rule_erase_if(Rule rule, const char* name)
+Rule rule_erase_if(Rule rule, const uint64  name)
 {
 	if(rule == NULL) return NULL;
 
@@ -111,14 +99,11 @@ Rule rule_erase_if(Rule rule, const char* name)
 	while(cur != NULL)
 	{
 		// retirer les propositions vide 
-		if((cur->type == Premise && (cur->name == NULL) && (name == NULL)) || 
-				(strcmp(cur->name, name) == 0))
+		if(cur->type == Premise && cur->name == name)
 		{
 			Rule del = cur;
 			
 			cur = prev == NULL ? (rule = cur->next) : (prev->next = cur->next);
-
-			if(del->name != NULL) free(del->name);
 
 			free(del);
 
@@ -135,7 +120,7 @@ void rule_print(Rule rule)
 {
 	for(Rule i = rule; i != NULL; i = i->next)
 	{
-		printf("(%s)-->", (i->name == NULL ? "" : i->name));
+		printf("(%s)-->", to_str(i->name));
 	}
 	printf("NULL\n");
 }
@@ -152,7 +137,7 @@ bool rule_is_empty_premise(Rule rule)
 
 	for(;rule != NULL; rule = rule->next)
 	{
-		if(rule->type == Premise && rule->name != NULL && rule->name[0] != '\0')
+		if(rule->type == Premise && rule->name != Empty && rule->name[0] != '\0')
 			return false;
 	}
 
