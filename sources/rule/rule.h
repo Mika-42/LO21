@@ -39,7 +39,7 @@ Rule rule_delete(Rule rule);
 bool rule_contain(const Rule rule, const Premise_t name);
 
 // supprime toutes les propositions correspondant au nom donné
-Rule rule_erase_if(Rule rule, const char* name);
+Rule rule_erase_if(Rule rule, const uint64 name);
 
 void rule_print(Rule rule);
 

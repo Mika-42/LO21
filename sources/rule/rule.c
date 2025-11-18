@@ -137,7 +137,7 @@ bool rule_is_empty_premise(Rule rule)
 
 	for(;rule != NULL; rule = rule->next)
 	{
-		if(rule->type == Premise && rule->name != Empty && rule->name[0] != '\0')
+		if(rule->type == Premise && rule->name != Empty)
 			return false;
 	}
 

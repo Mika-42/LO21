@@ -16,16 +16,11 @@ typedef unsigned long long int uint64;
 typedef uint64  Premise_t;
 typedef uint64	Conclusion_t;
 
-static inline uint64 not(const Premise_t p) { return p ^ (1ULL << 63); }
-static inline bool is_not(const Premise_t p) { return (p >> 63) & 1ULL; }
-
-#define to_str(P) #P
-
 typedef enum FactBase : Premise_t 
 {
 	Empty			= 0ULL,
-	RéservoirEssencePlein 	= 1ULL,
-	ClignotantFonctionnent	= 2ULL,
+	ReservoirEssencePlein 	= 1ULL,
+	ClignotantsFonctionnent	= 2ULL,
 	EssuieGlaceFonctionnent	= 3ULL,
 	PharesFonctionnent	= 4ULL,
 	ReservoirAntiGelPlein	= 5ULL,
@@ -35,5 +30,10 @@ typedef enum FactBase : Premise_t
 	MAX_FACT = 1ULL << 63,
 
 } FactBase;
+
+static inline uint64 not(const Premise_t p) { return p ^ (1ULL << 63); }
+static inline bool is_not(const Premise_t p) { return (p >> 63) & 1ULL; }
+
+const char* to_str(const FactBase fact);
 
 #endif //PROPOSITION_H
