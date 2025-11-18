@@ -135,9 +135,9 @@ void rule_print(Rule rule)
 {
 	for(Rule i = rule; i != NULL; i = i->next)
 	{
-		printf("(%s)-->", (i->name == NULL ? "" : i->name));
+		printf("\033[32m(%s)-->\033[0m", (i->name == NULL ? "" : i->name));
 	}
-	printf("NULL\n");
+	printf("\033[32mNULL\033[0m\n");
 }
 
 Rule rule_get_conclusion(Rule rule)
