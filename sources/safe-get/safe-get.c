@@ -34,7 +34,37 @@ int safe_get_uint(unsigned long long int* v)
 	return 0;
 }
 
-int safe_get_str(char*)
+int safe_get_str(char* v)
 {
+	char buffer[256];
+
+	if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+		return 1;
+	}
+
+	/* Retirer le \n éventuel */
+	buffer[strcspn(buffer, "\n")] = '\0';
+
+	/* Vérifier que la chaîne n'est pas vide */
+	if (buffer[0] == '\0') {
+		return 1;
+	}
+
+	/* Copier dans le buffer fourni par l'appelant */
+	strcpy(v, buffer);
+
 	return 0;
+}
+
+void safe_edit_rule(Rule* r, char* input, Rule (*func_ptr)(Rule, char*))
+{
+	for(;;)
+	{
+		if(safe_get_str(input) == 0)
+		{
+			*r = func_ptr(*r, input);
+			break;
+		}
+		printf(">>> ");
+	}
 }

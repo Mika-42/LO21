@@ -36,7 +36,7 @@ void add_rule_menu()
 	);
 	
 }
-void start_menu() 
+void start_menu(unsigned long long int* usr_input) 
 {
 	clear_shell();
 	printf(
@@ -45,6 +45,11 @@ void start_menu()
 		"|      (1) Add rule.                    |\n"
 		"[=======================================]\n"
 	);
+
+	do {
+                printf(">>> ");
+        }
+        while(safe_get_uint(usr_input) != 0);
 }
 
 void exit_menu()
@@ -60,18 +65,36 @@ void exit_menu()
 
 void cli_interface()
 {
-	start_menu();
-	unsigned long long int usr_input;
-	
-	do {
-		printf(">>> ");
-	}
-	while(safe_get_uint(&usr_input) != 0);
+	unsigned long long int usr_input;	
+//	KnowledgeBase kb = kb_new();
+
+	start_menu(&usr_input);
 
 	switch(usr_input)
 	{
 		case 0: exit_menu(); break;
-		case 1: add_rule_menu();
+		case 1: 
+
+			add_rule_menu();
+			
+			Rule r = rule_new();
+			char input[256];
+			do {	
+				printf("\nAdd a premise >>> ");
+			
+				safe_edit_rule(&r, input, rule_add_premise);
+
+				do {
+					printf("Add another premise ? no(0) yes(1) >>> ");
+        			}
+        			while(safe_get_uint(&usr_input) != 0);
+
+			} while(usr_input != 0);
+			
+			printf("\nAdd the conclusion >>> ");
+			safe_edit_rule(&r, input, rule_add_conclusion);
+			printf("\n");
+			rule_print(r);
 	}
 }
 
