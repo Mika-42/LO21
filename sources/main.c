@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <ncurses.h>
+#include <ctype.h>
 
 #include "safe-get.h"
 #include "rule.h"
@@ -24,97 +26,177 @@
  *				ajouter à PD la conclusion de R
  * */
 
-void start_menu(KnowledgeBase *kb, unsigned long long int* usr_input);
+unsigned long long int  start_menu();
 void exit_menu();
 
-void clear_shell() { 
-	printf("\033[2J\033[H");
-	fflush(stdout);
-}
-
-void add_rule_menu(KnowledgeBase *kb, unsigned long long int* usr_input)
+bool is_valid_str(char* s)
 {
-	clear_shell();
-	printf("[===============Add Rule================]\n");
-	Rule r = rule_new();
-	char input[256];
-	do {
-		printf("\nAdd a premise >>> ");
+	if(s == NULL)		return false;
+	if(s[0] == '\0')	return false;
 
-		safe_edit_rule(&r, input, rule_add_premise);
-
-		do {
-			printf("Add another premise ? no(0) yes(1) >>> ");
-		}
-		while(safe_get_uint(usr_input) != 0);
-
-	} while(*usr_input != 0);
-
-	printf("\nAdd the conclusion >>> ");
-	safe_edit_rule(&r, input, rule_add_conclusion);
-
-	*kb = kb_add_rule(*kb, r);
-
-	printf("\n");
-	rule_print(r);
-	printf("\n\n");
-	do {
-                        printf(
-				"Add another Rule   (0)\n"
-				"Back to start menu (1)\n"
-				">>> ");
-        }
-        while(safe_get_uint(usr_input) != 0);
-
-	if(*usr_input == 0) { add_rule_menu(kb, usr_input); }
-	else {start_menu(kb, usr_input);}
-
-}
-void start_menu(KnowledgeBase *kb, unsigned long long int* usr_input) 
-{
-	clear_shell();
-	printf(
-			"[===============Expert System===========]\n"
-			"|      (0) Exit.                        |\n"
-			"|      (1) Add rule.                    |\n"
-			"|      (2) Show knowledge base          |\n"
-			"[=======================================]\n"
-	      );
-
-	do {
-		printf(">>> ");
-	}
-	while(safe_get_uint(usr_input) != 0);
-
-	switch(*usr_input)
+	while(*s != '\0')
 	{
-		case 0: exit_menu(); break;
-		case 1: add_rule_menu(kb, usr_input); break;
-		case 2:	
-			for(KnowledgeBase i = *kb; i != NULL; i = i->next) 
-			{ 
-				rule_print(i->rule); 
+		if(!isalnum((unsigned char)*s)) return false;
+		s++;
+	}
+
+	return true;
+}
+
+void get_str(char* str, unsigned long long int cursorX, unsigned long long int cursorY)
+{
+	echo();
+	move(cursorX, cursorY);
+	getstr(str);
+	noecho();
+}
+
+void add_rule_menu(KnowledgeBase* kb)
+{
+	unsigned long long int i = 0;
+	unsigned long long int input_count = 0;
+	Rule rule = rule_new();
+
+	for(;;) {
+
+		clear();
+		mvprintw(0, 0, "[======================Add rule=======================]");
+		mvprintw(1, 2, "Tapez la premisse puis validez avec Entree");
+		mvprintw(2, 2, "Appuyez sur tab pour saisir la conclusion");	
+
+		i = 4;
+		for(Rule r = rule; r != NULL; r = r->next)
+		{
+			mvprintw(i++, 2, "[+] %s", r->name);
+		}
+
+		mvprintw(i, 2, ">> ");
+
+		for(unsigned long long int j = 0; j < i; ++j)
+		{
+			mvprintw(1 + j, 0, "|");
+			mvprintw(1 + j, 54, "|");
+		}
+		mvprintw(++i, 0, "[=====================================================]"); 
+
+		int ch = getch();
+		char buffer[256];
+
+		if(ch == '\t') 
+		{
+			for(unsigned long long int j = 0; j < 3; ++j)
+			{
+				mvprintw(1 + i + j, 0, "|");
+				mvprintw(1 + i + j, 54, "|");
 			}
+
+			mvprintw(4 + i, 0, "[=====================================================]");
+			mvprintw(++i, 2, "Tapez la conclusion puis validez Entree");
+			++i; ++i;
+
+			do {
+
+				mvprintw(i, 2, ">>");
+				get_str(buffer, 8 + input_count, 5);
+				rule = rule_add_conclusion(rule, buffer);
+			} 
+			while(!is_valid_str(buffer));
+
+			*kb = kb_add_rule(*kb, rule);
+
+			napms(2000);
+			break;
+		} else {
+
+			ungetch(ch);
+
+			get_str(buffer, 4 + input_count, 5);
+
+			if (is_valid_str(buffer)) {
+				++input_count;
+				rule = rule_add_premise(rule, buffer);
+			}
+		}
+	}
+}
+
+unsigned long long int  start_menu() 
+{
+
+	unsigned long long int i = 0;
+	unsigned long long int selected = 0;
+
+	const char* options[] = {
+		"Ajouter une regle",
+		"Afficher la base de connaissance",
+		"Quitter"
+	};
+	const unsigned long long int count = sizeof(options) / sizeof(options[0]);	
+
+	for(;;) {
+		clear();
+		mvprintw(0, 0, "[======================Expert System==================]");
+		mvprintw(1, 2, "Utiliser les fleches et Entree pour selectionner :");
+
+
+		for(i = 0; i < 5; ++i)
+		{
+			mvprintw(1 + i, 0, "|");
+			mvprintw(1 + i, 54, "|");
+		}
+
+		mvprintw(i+1, 0, "[=====================================================]");
+
+		for (i = 0; i < count; i++) {
+			if (i == selected) mvprintw(3 + i, 2, ">>");
+
+			mvprintw(3 + i, 5, "%s", options[i]);
+		}
+
+		int key = getch();
+
+		switch (key) {
+			case KEY_UP: selected = (selected - 1 + count) % count; break;
+			case KEY_DOWN: selected = (selected + 1) % count; break;
+			case '\n': endwin(); return selected;
+		}
 	}
 }
 
 void exit_menu()
-{
-	clear_shell();
-	printf(
-			"[===================Exit=================]\n"
-			"| Thank you for using our expert system. |\n"
-			"[========================================]\n"
-	      );
+{	
+	clear();
+	mvprintw(0, 0, "[======================Exit===========================]");
+	mvprintw(1, 0, "| Merci d'avoir utilise notre systeme expert.         |");
+	mvprintw(2, 0, "[=====================================================]");
+	refresh();
+	napms(2000);	
 }
 
+void cli_event_dispatcher(KnowledgeBase* kb)
+{
+	switch(start_menu())
+	{
+		case 0: add_rule_menu(kb); break;
+		case 2: exit_menu(); return;
+	}
+	cli_event_dispatcher(kb);
+}
 
 void cli_interface()
 {
-	unsigned long long int usr_input;	
 	KnowledgeBase kb = kb_new();
 
-	start_menu(&kb, &usr_input);
+	initscr();
+	noecho();
+	cbreak();
+	keypad(stdscr, TRUE);
+	flushinp();
+	curs_set(0);
+
+	cli_event_dispatcher(&kb);
+
+	endwin();
 
 }
 

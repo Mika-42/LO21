@@ -28,6 +28,9 @@ Rule rule_add_conclusion(Rule rule, char* name)
 
 Rule rule_push_back(Rule rule, char* name, Type type)
 {
+	// empêche les doublons
+	if(rule_contain(rule, name)) return rule;
+
 	// ici, calloc permet d'initialiser tout les membres à 0 ou NULL
 	Rule newElement = calloc(1, sizeof(*newElement));
 	
@@ -142,6 +145,7 @@ void rule_print(Rule rule)
 
 Rule rule_get_conclusion(Rule rule)
 {
+	if(rule == NULL) return NULL;	
 	for(;rule->next != NULL; rule = rule->next);
 	return (rule->type == Conclusion) ? rule : NULL;
 }
